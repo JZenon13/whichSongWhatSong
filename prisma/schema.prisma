@@ -11,11 +11,13 @@ datasource db {
   relationMode = "prisma"
 }
 
-model Post {
+model Song {
     id        Int      @id @default(autoincrement())
-    name      String
+    title     String
+    artist    String
+    key       String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@index([name])
+    @@index([title])
 }
