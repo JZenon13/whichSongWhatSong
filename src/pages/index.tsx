@@ -2,12 +2,49 @@ import Head from "next/head";
 import Link from "next/link";
 import { SignIn, SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 
-import { api } from "~/utils/api";
+import { RouterOutputs, api } from "~/utils/api";
 
+const CreateSongWizard = () => {
+  const { user } = useUser();
+
+  if (!user) {
+    return null;
+  }
+
+  return (
+    <div className="flex w-full gap-3">
+      <img
+        src={user.imageUrl}
+        alt="profile image"
+        className="h-14 w-14 rounded-full"
+      />
+      <input
+        type="text"
+        placeholder="Song Title"
+        className="bg-transparent outline-none"
+      />
+    </div>
+  );
+};
+
+type SongWithUser = RouterOutputs["song"]["getAll"][number];
+const SongView = (props: SongWithUser) => {
+  const { song, user } = props;
+
+  return <div key={song.id}>{song.title}</div>;
+};
 export default function Home() {
   const user = useUser();
 
-  const { data } = api.song.getAll.useQuery();
+  const { data, isLoading } = api.song.getAll.useQuery();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!data) {
+    return <div>Something went wrong</div>;
+  }
 
   return (
     <>
@@ -17,6 +54,18 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
+        <div>
+          {!user.isSignedIn && (
+            <div className="flex justify-center">
+              <SignInButton />
+            </div>
+          )}
+          {user.isSignedIn && (
+            <div className="flex justify-center">
+              <CreateSongWizard />
+            </div>
+          )}
+        </div>
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
             Time <span className="text-[hsl(280,100%,70%)]">To</span> Jam
@@ -28,7 +77,7 @@ export default function Home() {
               target="_blank"
             >
               <h3 className="text-2xl font-bold">Songs →</h3>
-              <div className="text-lg">asdfasdfasdfasdfasdf</div>
+              <div className="text-lg">Songs</div>
             </Link>
             <Link
               className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
@@ -36,12 +85,12 @@ export default function Home() {
               target="_blank"
             >
               <h3 className="text-2xl font-bold">Play-Along →</h3>
-              <div className="text-lg">asfasdfasdfasdfasdfasdfasdf</div>
+              <div className="text-lg">Play-Along</div>
             </Link>
             <div>
-              {data?.map((song) => {
-                return <div key={song.id}>{song.title}</div>;
-              })}
+              {[...data]?.map((fullPost) => (
+                <SongView {...fullPost} key={fullPost.song.id} />
+              ))}
             </div>
           </div>
         </div>
