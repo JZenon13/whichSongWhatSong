@@ -1,4 +1,4 @@
-import { songRouter } from "~/server/api/routers/song";
+import { songRouter } from "~/server/api/routers/songs";
 import { createTRPCRouter } from "~/server/api/trpc";
 
 /**

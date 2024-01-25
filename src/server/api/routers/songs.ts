@@ -2,18 +2,22 @@ import { clerkClient } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  publicProcedure,
+  privateProcedure,
+} from "~/server/api/trpc";
 
 const filterUserForClient = (user: User) => {
   return { id: user.id, username: user.username, imageUrl: user.imageUrl };
 };
 export const songRouter = createTRPCRouter({
-  create: publicProcedure
+  create: privateProcedure
     .input(
       z.object({
-        title: z.string().min(1),
-        artist: z.string().min(1),
-        key: z.string().min(1),
+        title: z.string(),
+        artist: z.string(),
+        key: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -43,9 +47,9 @@ export const songRouter = createTRPCRouter({
     return songs.map((song) => {
       const user = users.find((user) => user.id === String(song.id));
 
-      if (!user) {
-        throw new TRPCError({ message: "User not found", code: "NOT_FOUND" });
-      }
+      // if (!user) {
+      //   throw new TRPCError({ message: "User not found", code: "NOT_FOUND" });
+      // }
 
       return {
         song,
