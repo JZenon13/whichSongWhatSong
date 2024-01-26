@@ -1,11 +1,10 @@
 import Head from "next/head";
 import Link from "next/link";
 import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
-import { LoadingPage, LoadingSpinner } from "../components/loading";
+import { LoadingPage, LoadingSpinner } from "./components/loading";
 import { RouterOutputs, api } from "~/utils/api";
 import React from "react";
 import toast from "react-hot-toast";
-import Image from "next/image";
 
 const CreateSongWizard = () => {
   const { user } = useUser();
@@ -32,9 +31,9 @@ const CreateSongWizard = () => {
 
   return (
     <div className="flex w-full gap-3">
-      <Image
+      <img
         src={user.imageUrl}
-        alt="profile image"
+        alt={`${user.fullName} pic`}
         className="h-14 w-14 rounded-full"
       />
       <input
@@ -126,12 +125,23 @@ const Feed = () => {
 
 type SongWithUser = RouterOutputs["song"]["getAll"][number];
 const SongView = (props: SongWithUser) => {
-  const { song } = props;
+  const { song, user } = props;
 
-  return <div key={song.id}>{song.title}</div>;
+  return (
+    <div key={song.id}>
+      <Link
+        className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
+        href={`/song/${song.id}`}
+      >
+        <h3 className="text-2xl font-bold">Play-Along →</h3>
+        <div className="text-lg">{song.title}</div>
+        <div className="text-lg">{song.artist}</div>
+      </Link>
+    </div>
+  );
 };
 export default function Home() {
-  const { isLoaded: userLoaded, isSignedIn } = useUser();
+  const { isLoaded: userLoaded, isSignedIn, user } = useUser();
 
   api.song.getAll.useQuery();
   if (!userLoaded) return <div />;
@@ -166,20 +176,12 @@ export default function Home() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
             <Link
               className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
+              href={`/@${user}`}
             >
               <h3 className="text-2xl font-bold">Songs →</h3>
               <div className="text-lg">Songs</div>
             </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Play-Along →</h3>
-              <div className="text-lg">Play-Along</div>
-            </Link>
+
             <div>
               <Feed />
             </div>
