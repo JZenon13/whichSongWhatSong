@@ -16,7 +16,7 @@ const CreateSongWizard = () => {
     return null;
   }
 
-  const ctx = api.useUtils();
+  const ctx = api.useContext();
   const { mutate, isLoading: isPosting } = api.song.create.useMutation({
     onSuccess: () => {
       setTitle("");
