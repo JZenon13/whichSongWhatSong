@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
-import { LoadingPage, LoadingSpinner } from "./components/loading";
+import { LoadingPage, LoadingSpinner } from "../components/loading";
 import { RouterOutputs, api } from "~/utils/api";
 import React from "react";
 import toast from "react-hot-toast";
