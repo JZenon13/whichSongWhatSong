@@ -70,11 +70,9 @@ export const songRouter = createTRPCRouter({
 
     return songs.map((song) => {
       const user = users.find((user) => user.id === String(song.id));
-
       // if (!user) {
       //   throw new TRPCError({ message: "User not found", code: "NOT_FOUND" });
       // }
-
       return {
         song,
         user,
