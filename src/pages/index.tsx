@@ -5,6 +5,7 @@ import { LoadingPage, LoadingSpinner } from "./components/loading";
 import { RouterOutputs, api } from "~/utils/api";
 import React from "react";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 const CreateSongWizard = () => {
   const { user } = useUser();
@@ -24,14 +25,14 @@ const CreateSongWizard = () => {
       setKey("");
       void ctx.song.getAll.invalidate();
     },
-    onError: (err) => {
+    onError: () => {
       toast.error("Failed to create song");
     },
   });
 
   return (
     <div className="flex w-full gap-3">
-      <img
+      <Image
         src={user.imageUrl}
         alt="profile image"
         className="h-14 w-14 rounded-full"
@@ -125,7 +126,7 @@ const Feed = () => {
 
 type SongWithUser = RouterOutputs["song"]["getAll"][number];
 const SongView = (props: SongWithUser) => {
-  const { song, user } = props;
+  const { song } = props;
 
   return <div key={song.id}>{song.title}</div>;
 };
