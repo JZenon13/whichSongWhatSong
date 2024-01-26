@@ -1,9 +1,10 @@
 import Head from "next/head";
 import Link from "next/link";
 import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
-import { LoadingPage } from "./components/loading";
+import { LoadingPage, LoadingSpinner } from "./components/loading";
 import { RouterOutputs, api } from "~/utils/api";
 import React from "react";
+import toast from "react-hot-toast";
 
 const CreateSongWizard = () => {
   const { user } = useUser();
@@ -22,6 +23,9 @@ const CreateSongWizard = () => {
       setArtist("");
       setKey("");
       void ctx.song.getAll.invalidate();
+    },
+    onError: (err) => {
+      toast.error("Failed to create song");
     },
   });
 
@@ -76,17 +80,25 @@ const CreateSongWizard = () => {
       <label>Minor</label>
       <br />
 
-      <button
-        onClick={() =>
-          mutate({
-            title: title,
-            artist: artist,
-            key: key,
-          })
-        }
-      >
-        Post
-      </button>
+      {title && artist && key !== "" && !isPosting && (
+        <button
+          onClick={() =>
+            mutate({
+              title: title,
+              artist: artist,
+              key: key,
+            })
+          }
+          disabled={isPosting}
+        >
+          Post
+        </button>
+      )}
+      {isPosting && (
+        <div>
+          <LoadingSpinner />
+        </div>
+      )}
     </div>
   );
 };
@@ -102,7 +114,6 @@ const Feed = () => {
     return <div>Something went wrong</div>;
   }
 
-  console.log(data);
   return (
     <div>
       {data?.map((fullPost) => (
@@ -142,7 +153,7 @@ export default function Home() {
           )}
           {isSignedIn && (
             <div className="flex justify-center">
-              {/* <CreateSongWizard /> */}
+              <CreateSongWizard />
               <SignOutButton />
             </div>
           )}
