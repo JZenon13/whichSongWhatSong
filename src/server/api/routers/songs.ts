@@ -1,5 +1,4 @@
 import { clerkClient } from "@clerk/nextjs";
-import { User } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import {
@@ -7,10 +6,7 @@ import {
   publicProcedure,
   privateProcedure,
 } from "~/server/api/trpc";
-
-const filterUserForClient = (user: User) => {
-  return { id: user.id, username: user.username, imageUrl: user.imageUrl };
-};
+import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 
 import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
 import { Redis } from "@upstash/redis"; // see below for cloudflare and fastly adapters
@@ -69,13 +65,8 @@ export const songRouter = createTRPCRouter({
     ).map(filterUserForClient);
 
     return songs.map((song) => {
-      const user = users.find((user) => user.id === String(song.id));
-      // if (!user) {
-      //   throw new TRPCError({ message: "User not found", code: "NOT_FOUND" });
-      // }
       return {
         song,
-        user,
       };
     });
   }),
