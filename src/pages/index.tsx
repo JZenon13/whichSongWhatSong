@@ -2,14 +2,16 @@ import Link from "next/link";
 import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import { LoadingPage, LoadingSpinner } from "../components/loading";
 import { RouterOutputs, api } from "~/utils/api";
-import React from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 const CreateSongWizard = () => {
   const { user } = useUser();
-  const [title, setTitle] = React.useState("");
-  const [artist, setArtist] = React.useState("");
-  const [key, setKey] = React.useState("C");
+  const [title, setTitle] = useState("");
+  const [artist, setArtist] = useState("");
+  const [key, setKey] = useState("C");
+  const [mode, setMode] = useState("Major");
+  const [genre, setGenre] = useState("");
 
   if (!user) {
     return null;
@@ -21,6 +23,7 @@ const CreateSongWizard = () => {
       setTitle("");
       setArtist("");
       setKey("");
+      setGenre("");
       void ctx.song.getAll.invalidate();
     },
     onError: () => {
@@ -51,9 +54,27 @@ const CreateSongWizard = () => {
         value={artist}
         disabled={isPosting}
       />
-
+      <input
+        list="genres"
+        placeholder="Genre"
+        className="bg-transparent outline-none"
+        onChange={(e) => setGenre(e.target.value.toLocaleLowerCase())}
+        value={genre}
+        disabled={isPosting}
+      />
+      <datalist id="genres">
+        <option value="rock" />
+        <option value="pop" />
+        <option value="jazz" />
+        <option value="electronic" />
+        <option value="Classical" />
+        <option value="hip-hop" />
+      </datalist>
       <label>Choose a Key:</label>
-      <select id="Song Key" onChange={(e) => setKey(e.target.value)}>
+      <select
+        id="Song Key"
+        onChange={(e) => setKey(e.target.value + " " + mode)}
+      >
         <option value="C">C</option>
         <option value="C#">C#</option>
         <option value="Db">Db</option>
@@ -72,10 +93,22 @@ const CreateSongWizard = () => {
         <option value="Bb">Bb</option>
         <option value="B">B</option>
       </select>
-      <input type="radio" name="Mode" />
+      <input
+        type="radio"
+        name="Mode"
+        value="Major"
+        checked={mode === "Major"}
+        onChange={(e) => setMode(e.target.value)}
+      />
       <label>Major</label>
       <br />
-      <input type="radio" name="Mode" />
+      <input
+        type="radio"
+        name="Mode"
+        checked={mode === "Minor"}
+        value="Minor"
+        onChange={(e) => setMode(e.target.value)}
+      />
       <label>Minor</label>
       <br />
 
@@ -86,6 +119,7 @@ const CreateSongWizard = () => {
               title: title,
               artist: artist,
               key: key,
+              genre: genre,
             })
           }
           disabled={isPosting}
@@ -162,17 +196,12 @@ export default function Home() {
         </div>
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-            Time <span className="text-[hsl(280,100%,70%)]">To</span> Jam
+            Time To
+            <Link href={`/jam/${user?.fullName}`}>
+              <span className="text-[hsl(280,100%,70%)]"> Jam</span>
+            </Link>
           </h1>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            {/* <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href={`/@${user?.fullName}`}
-            >
-              <h3 className="text-2xl font-bold">Songs →</h3>
-              <div className="text-lg">Songs</div>
-            </Link> */}
-
             <div>
               <Feed />
             </div>

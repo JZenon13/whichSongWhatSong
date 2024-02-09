@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -12,12 +9,13 @@ datasource db {
 }
 
 model Song {
-    id        Int      @id @default(autoincrement())
-    title     String
-    artist    String
-    key       String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  title     String
+  artist    String
+  key       String
+  genre     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([title])
+  @@index([title])
 }

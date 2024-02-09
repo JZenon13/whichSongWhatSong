@@ -30,6 +30,7 @@ export const songRouter = createTRPCRouter({
         title: z.string(),
         artist: z.string(),
         key: z.string(),
+        genre: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -49,6 +50,7 @@ export const songRouter = createTRPCRouter({
           title: input.title,
           artist: input.artist,
           key: input.key,
+          genre: input.genre,
           createdAt: new Date(),
         },
       });
