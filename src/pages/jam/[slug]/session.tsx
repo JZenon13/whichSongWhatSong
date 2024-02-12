@@ -1,7 +1,10 @@
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { useUser } from "@clerk/nextjs";
 
 export default function Session() {
+  const { user } = useUser();
   type Song = {
     title: string;
     artist: string;
@@ -74,6 +77,9 @@ export default function Session() {
         />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
+        <Link href={`/jam/${user?.fullName}`}>
+          <button>Back</button>
+        </Link>
         <div title="SpeedButtons">
           <button
             className={
